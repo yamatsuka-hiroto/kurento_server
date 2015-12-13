@@ -19,7 +19,7 @@ prepaereKurento();
 // -- create the cokcet server on the port
 var srv = require("http").Server();
 var io = require("socket.io")(srv);
-var port = 8000;
+var port = 9001;
 srv.listen(port);
 io.on("connection", function (socket) {
     socket.on("echoback_request", function (sdp) {

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Broadcast Talk</title>  
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+  <button type="button" onclick="startVideo();">Start video</button>
+  <button type="button" onclick="stopVideo();">Stop video</button>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <button type="button" onclick="tellReady();">On Air</button>
+  <br />
+  <div style="position: relative;">
+   <video id="local-video" autoplay style="width: 320px; height: 240px; border: 1px solid black;"></video>
+   <video id="remote-video" autoplay style="width: 320px; height: 240px; border: 1px solid black;"></video>
+  </div>
+  
+  <script src="http://104.154.82.250:9001/socket.io/socket.io.js"></script>
+  <script src="http://104.154.82.250/jquery.js"></script>
+  <script src="http://104.154.82.250/kurento-utils.js"></script>
+  <script>
+  window.onload = function() {
+      var obj = {
+          "base":{
+            color:"white",
+            speed:"normal",
+            interval:"slow",
+            font_size:"50px",
+            loop:true
+          },
+          "comments":[
+              ]
+      };
+
+      nicoscreen.set(obj);
+      nicoscreen.start();
+  };
+  var localVideo = document.getElementById('local-video');
+  var localVideo = document.getElementById('remote-video');
+  var localStream = null;
+  var mediaConstraints = {'mandatory': {'OfferToReceiveAudio':false, 'OfferToReceiveVideo':false }};
+  
+  var pc_config ={"iceServers":[{
+    "url": "stun:stun.l.google.com:19302",
+} ]};
+  kurentoUtils.WebRtcPeer.prototype.server = pc_config;
+  var webRtcPeer = null;  
+  // ---- socket -----
+  // create socket
+  var socketReady = false;
+  var port = 9001;
+  var socket = io.connect('http://104.154.82.250:' + port + '/');
+
+  // socket: accept connection request
+  // start local video
+  function startVideo() {
+    webRtcPeer = kurentoUtils.WebTrcPeer.startSendRecv(
+      lovalBieo, remotVideo,
+      onOfferCreated,
+      onError
+    );
+  }
+  
+  function onOfferCreated(sdpOffer){
+    var msg = "echoback_request";
+    socket.emit(msg,sdpOffer);
+  }
+  // stop local video
+  function stopVideo() {
+    hangUp();
+
+    localVideo.src = "";
+    localStream.stop();
+    localStream = null;
+  }
+
+  // ---------------------- connection handling -----------------------
+  </script>
+</body>
+</html>
